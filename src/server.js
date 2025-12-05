@@ -6,6 +6,7 @@ import { PrismaClient } from '@prisma/client';
 import authRoutes from './routes/auth.js';
 import gamesRoutes from './routes/games.js';
 import betsRoutes from './routes/bets.js';
+import { authenticateToken, requireAdmin } from './middleware/auth.js';
 
 dotenv.config();
 
@@ -49,8 +50,8 @@ app.get('/db-check', async (req, res) => {
 
 // Routes
 app.use('/api/auth', authRoutes);
-app.use('/api/games', gamesRoutes);
-app.use('/api/bets', betsRoutes);
+app.use('/api/games', authenticateToken, gamesRoutes);
+app.use('/api/bets', authenticateToken, betsRoutes);
 
 // 404 fallback
 app.use((req, res) => {
@@ -66,5 +67,7 @@ app.use((err, req, res, next) => {
 // Boot
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
-  console.log(`🚀 CARTEL47 backend running on http://localhost:${PORT}`);
+  console.log(`CARTEL47 Backend running on port ${PORT}`);
 });
+
+export default app;
